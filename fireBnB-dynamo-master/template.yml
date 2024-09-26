@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+  AddNewProperty:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.addNewProperty
+      Runtime: nodejs20.x
+      CodeUri: ./firebnb
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: conductores
+      Environment:
+        Variables:
+          TABLE_NAME: conductores
+      Events:
+        HelloAPI:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /property
+            Method: POST
+
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: conductores
+      AttributeDefinitions:
+        - AttributeName: DNI
+          AttributeType: S
+        - AttributeName: id_user
+          AttributeType: N
+        - AttributeName: camion_placa
+          AttributeType: S
+        - AttributeName: carreta_placa
+          AttributeType: S
+      KeySchema:
+        - AttributeName: DNI
+          KeyType: HASH  # Partition key
+      ProvisionedThroughput: 
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1-IdUser
+          KeySchema:
+            - AttributeName: id_user
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2-CamionPlaca
+          KeySchema:
+            - AttributeName: camion_placa
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI3-CarretaPlaca
+          KeySchema:
+            - AttributeName: carreta_placa
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      
+
+Outputs:
+  Region:
+    Description: Region
+    Value: !Ref AWS::Region
+  ApiId:
+    Description: API ID
+    Value: !Ref MyApi
+  ApiUrl:
+    Description: API endpoint URL for Prod environment
+    Value: !Sub https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/

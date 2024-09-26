@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  environment-variables-example
+
+  Sample SAM Template for environment-variables-example
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Variables:
+        MY_VARIABLE: AQICAHjzgDufkV+iZXin8zEI/JbCuMkwJuZp4vWVjGUHdGMVMAGz3RO6SwIIYd7JhzRu/4+HAAAAdDByBgkqhkiG9w0BBwagZTBjAgEAMF4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM1XZ0uhn4PQFFA1E4AgEQgDFgMfj6lFtqJ+ndYR59jxBaznLx62JCoalyWGcqL1+3uMOXDp/JJSBLXsD2zkMdXRxy
+        MY_COGNITO_USER_POOL_ID: AQICAHjzgDufkV+iZXin8zEI/JbCuMkwJuZp4vWVjGUHdGMVMAFzHwrPTaSeAR9dQoysRge0AAAAZTBjBgkqhkiG9w0BBwagVjBUAgEAME8GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMu1Yy3K5vFSho237oAgEQgCK9Fk8UOVQvL2IqtQ3w3S7hPDXMW8j/ZWbZ7igevINg5h3i
+        MY_COGNITO_CLIENT_APP_SECRET: AQICAHjzgDufkV+iZXin8zEI/JbCuMkwJuZp4vWVjGUHdGMVMAH4anZnw+/qybCRuxZXgC6CAAAAaTBnBgkqhkiG9w0BBwagWjBYAgEAMFMGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMnyx2cGOPxrbNE3/UAgEQgCZ4A+bXQs4i0H8uFo21QTSiAkZ4pb8Z0yTfWkFTn18NN1WukFVpog==
+
+Resources:
+  EnvironmentVariablesExampleFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: EnvironmentVariablesExample
+      Handler: com.appsdeveloperblog.aws.lambda.EnvironmentVariablesExample::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  EnvironmentVariablesExampleApi:
+    Description: "API Gateway endpoint URL for Prod stage for EnvironmentVariablesExample function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  EnvironmentVariablesExampleFunction:
+    Description: "EnvironmentVariablesExample Lambda Function ARN"
+    Value: !GetAtt EnvironmentVariablesExampleFunction.Arn
+  EnvironmentVariablesExampleFunctionIamRole:
+    Description: "Implicit IAM Role created for EnvironmentVariablesExample function"
+    Value: !GetAtt EnvironmentVariablesExampleFunctionRole.Arn

@@ -1,0 +1,8 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "error-response-example-non-proxy"
+resolve_s3 = true
+s3_prefix = "error-response-example-non-proxy"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
